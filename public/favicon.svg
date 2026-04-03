@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#0f3d2e"/>
+
+  <!-- Laptop base -->
+  <rect x="14" y="36" width="36" height="3" rx="1.5" fill="#52b788"/>
+
+  <!-- Laptop screen body -->
+  <rect x="18" y="22" width="28" height="16" rx="2" fill="#1a4a3a"/>
+  <!-- Screen glow -->
+  <rect x="20" y="24" width="24" height="12" rx="1" fill="#2d7a5f"/>
+  <!-- Code lines on screen -->
+  <rect x="22" y="26" width="10" height="1.5" rx="0.75" fill="#52b788" opacity="0.9"/>
+  <rect x="22" y="29" width="16" height="1.5" rx="0.75" fill="#52b788" opacity="0.7"/>
+  <rect x="22" y="32" width="8" height="1.5" rx="0.75" fill="#52b788" opacity="0.5"/>
+
+  <!-- Head -->
+  <circle cx="32" cy="12" r="5" fill="#f0c080"/>
+  <!-- Hair -->
+  <path d="M27 10 Q28 6 32 6 Q36 6 37 10 Q35 8 32 8 Q29 8 27 10Z" fill="#2c1810"/>
+  <!-- Glasses -->
+  <rect x="28" y="11.5" width="3.5" height="2.5" rx="1" fill="none" stroke="#2c1810" stroke-width="0.8"/>
+  <rect x="32.5" y="11.5" width="3.5" height="2.5" rx="1" fill="none" stroke="#2c1810" stroke-width="0.8"/>
+  <line x1="31.5" y1="12.75" x2="32.5" y2="12.75" stroke="#2c1810" stroke-width="0.6"/>
+
+  <!-- Body / shirt -->
+  <path d="M26 18 Q28 17 32 17 Q36 17 38 18 L39 22 L25 22 Z" fill="#3d9970"/>
+  <!-- Arms -->
+  <path d="M25 19 L20 23 L22 24 L27 21Z" fill="#3d9970"/>
+  <path d="M39 19 L44 23 L42 24 L37 21Z" fill="#3d9970"/>
+  <!-- Hands on laptop -->
+  <circle cx="21" cy="24.5" r="1.5" fill="#f0c080"/>
+  <circle cx="43" cy="24.5" r="1.5" fill="#f0c080"/>
+</svg>
