@@ -1,14 +1,37 @@
+import { Head } from '@inertiajs/vue3'
+
 <template>
+    <Head>
+    <title>{{ profile?.name }} — Full-Stack Developer</title>
+    <meta name="description" :content="profile?.bio_en?.substring(0, 160)" />
+    <meta name="keywords" content="Full-Stack Developer, Laravel, Vue.js, Angular, .NET, PHP, Morocco" />
+
+    <!-- Open Graph (Facebook, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://elmahditamika.com" />
+    <meta property="og:title" :content="profile?.name + ' — Full-Stack Developer'" />
+    <meta property="og:description" :content="profile?.bio_en?.substring(0, 160)" />
+    <meta property="og:image" :content="profile?.avatar ? 'https://elmahditamika.com/storage/' + profile.avatar : 'https://elmahditamika.com/favicon.svg'" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" :content="profile?.name + ' — Full-Stack Developer'" />
+    <meta name="twitter:description" :content="profile?.bio_en?.substring(0, 160)" />
+    <meta name="twitter:image" :content="profile?.avatar ? 'https://elmahditamika.com/storage/' + profile.avatar : 'https://elmahditamika.com/favicon.svg'" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://elmahditamika.com" />
+  </Head>
   <div :class="['min-h-screen font-sans', darkMode ? 'dark' : '']">
     <!-- Navigation -->
     <nav
       class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-      :class="scrolled ? 'bg-white/95 backdrop-blur shadow-md' : 'bg-transparent'"
+      :class="scrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur shadow-md' : 'bg-transparent'"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <!-- Logo -->
-          <a href="#home" class="flex items-center gap-2 font-bold text-xl" :class="scrolled ? 'text-gray-900' : 'text-white'">
+          <a href="#home" class="flex items-center gap-2 font-bold text-xl" :class="scrolled ? 'text-gray-900 dark:text-white' : 'text-white'">
             <div class="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center text-white font-bold">
               {{ profile?.name?.charAt(0) || 'P' }}
             </div>
@@ -22,7 +45,7 @@
               :key="link.id"
               :href="'#' + link.id"
               class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
-              :class="scrolled ? 'text-gray-700 hover:text-teal-600 hover:bg-teal-50' : 'text-white/90 hover:text-white hover:bg-white/10'"
+              :class="scrolled ? 'text-gray-700 dark:text-gray-200 hover:text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30' : 'text-white/90 hover:text-white hover:bg-white/10'"
             >
               {{ link.label }}
             </a>
@@ -34,16 +57,17 @@
             <button
               @click="toggleLocale"
               class="px-3 py-1.5 text-sm font-semibold rounded-lg border transition-colors"
-              :class="scrolled ? 'border-gray-300 text-gray-700 hover:border-teal-500 hover:text-teal-600' : 'border-white/40 text-white hover:bg-white/10'"
+              :class="scrolled ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-teal-500 hover:text-teal-600' : 'border-white/40 text-white hover:bg-white/10'"
             >
               {{ currentLocale === 'fr' ? 'EN' : 'FR' }}
             </button>
+
 
             <!-- Dark mode toggle -->
             <button
               @click="darkMode = !darkMode"
               class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
-              :class="scrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'"
+              :class="scrolled ? 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-white hover:bg-white/10'"
             >
               {{ darkMode ? '☀️' : '🌙' }}
             </button>
@@ -60,13 +84,13 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div v-if="mobileMenu" class="md:hidden bg-white rounded-xl shadow-xl mt-2 mb-4 overflow-hidden">
+        <div v-if="mobileMenu" class="md:hidden bg-white dark:bg-gray-900 rounded-xl shadow-xl mt-2 mb-4 overflow-hidden">
           <a
             v-for="link in navLinks"
             :key="link.id"
             :href="'#' + link.id"
             @click="mobileMenu = false"
-            class="block px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors font-medium"
+            class="block px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:text-teal-600 transition-colors font-medium"
           >
             {{ link.label }}
           </a>
@@ -224,11 +248,11 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-20 bg-white">
+    <section id="about" class="py-20 bg-white dark:bg-gray-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <span class="inline-block bg-teal-50 text-teal-700 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('about.title') }}</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">{{ t('about.subtitle') }}</h2>
+          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('about.title') }}</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('about.subtitle') }}</h2>
           <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
         </div>
 
@@ -249,9 +273,9 @@
               </div>
 
               <!-- Info cards -->
-              <div class="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-xl p-4">
+              <div class="absolute -bottom-6 -right-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4">
                 <div class="text-3xl font-extrabold text-teal-600">{{ profile?.years_experience || 0 }}+</div>
-                <div class="text-sm text-gray-500">{{ t('about.experience') }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">{{ t('about.experience') }}</div>
               </div>
 
               <div class="absolute -top-4 -left-4 bg-teal-600 rounded-2xl shadow-xl p-4 text-white">
@@ -263,41 +287,41 @@
 
           <!-- Right: Bio + info -->
           <div class="space-y-6">
-            <h3 class="text-2xl font-bold text-gray-900">{{ profile?.name }}</h3>
-            <p class="text-teal-600 font-semibold text-lg">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ profile?.name }}</h3>
+            <p class="text-teal-600 dark:text-teal-400 font-semibold text-lg">
               {{ currentLocale === 'fr' ? profile?.title_fr : profile?.title_en }}
             </p>
-            <p class="text-gray-600 leading-relaxed text-lg">
+            <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
               {{ currentLocale === 'fr' ? profile?.bio_fr : profile?.bio_en }}
             </p>
 
             <!-- Info grid -->
             <div class="grid sm:grid-cols-2 gap-4">
-              <div v-if="profile?.location" class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div v-if="profile?.location" class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                 <span class="text-2xl">📍</span>
                 <div>
-                  <div class="text-xs text-gray-500 font-medium">{{ t('about.location') }}</div>
-                  <div class="text-gray-900 font-medium">{{ profile.location }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t('about.location') }}</div>
+                  <div class="text-gray-900 dark:text-white font-medium">{{ profile.location }}</div>
                 </div>
               </div>
-              <div v-if="profile?.email" class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div v-if="profile?.email" class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                 <span class="text-2xl">✉️</span>
                 <div>
-                  <div class="text-xs text-gray-500 font-medium">{{ t('about.email') }}</div>
-                  <div class="text-gray-900 font-medium text-sm">{{ profile.email }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t('about.email') }}</div>
+                  <div class="text-gray-900 dark:text-white font-medium text-sm">{{ profile.email }}</div>
                 </div>
               </div>
-              <div v-if="profile?.phone" class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div v-if="profile?.phone" class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                 <span class="text-2xl">📱</span>
                 <div>
-                  <div class="text-xs text-gray-500 font-medium">{{ t('about.phone') }}</div>
-                  <div class="text-gray-900 font-medium">{{ profile.phone }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t('about.phone') }}</div>
+                  <div class="text-gray-900 dark:text-white font-medium">{{ profile.phone }}</div>
                 </div>
               </div>
-              <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                 <span class="text-2xl">{{ profile?.available ? '🟢' : '🔴' }}</span>
                 <div>
-                  <div class="text-xs text-gray-500 font-medium">Disponibilité</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Disponibilité</div>
                   <div class="font-medium" :class="profile?.available ? 'text-green-600' : 'text-red-500'">
                     {{ profile?.available ? t('hero.available') : t('hero.not_available') }}
                   </div>
@@ -421,11 +445,11 @@
     </section>
 
     <!-- Experience Section -->
-    <section id="experience" class="py-20 bg-white">
+    <section id="experience" class="py-20 bg-white dark:bg-gray-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <span class="inline-block bg-teal-50 text-teal-700 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('experience.title') }}</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">{{ t('experience.subtitle') }}</h2>
+          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('experience.title') }}</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('experience.subtitle') }}</h2>
           <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
         </div>
 
@@ -440,23 +464,23 @@
               class="relative sm:pl-20"
             >
               <!-- Timeline dot -->
-              <div class="absolute left-5 top-6 w-6 h-6 rounded-full bg-teal-600 border-4 border-white shadow-md hidden sm:flex items-center justify-center">
+              <div class="absolute left-5 top-6 w-6 h-6 rounded-full bg-teal-600 border-4 border-white dark:border-gray-900 shadow-md hidden sm:flex items-center justify-center">
                 <div class="w-2 h-2 rounded-full bg-white"></div>
               </div>
 
-              <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
+              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700">
                 <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
                   <div>
-                    <h3 class="text-xl font-bold text-gray-900">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">
                       {{ currentLocale === 'fr' ? exp.position_fr : exp.position_en }}
                     </h3>
                     <div class="flex items-center gap-2 mt-1">
-                      <span class="font-semibold text-teal-600">{{ exp.company }}</span>
-                      <span v-if="exp.location" class="text-gray-400 text-sm">• {{ exp.location }}</span>
+                      <span class="font-semibold text-teal-600 dark:text-teal-400">{{ exp.company }}</span>
+                      <span v-if="exp.location" class="text-gray-400 dark:text-gray-500 text-sm">• {{ exp.location }}</span>
                     </div>
                   </div>
                   <div class="flex flex-col items-end gap-2">
-                    <div class="flex items-center gap-2 text-sm text-gray-500">
+                    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <span>📅</span>
                       <span>
                         {{ formatDate(exp.start_date) }} —
@@ -473,7 +497,7 @@
                     >{{ exp.contract_type }}</span>
                   </div>
                 </div>
-                <p class="text-gray-600 leading-relaxed">
+                <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
                   {{ currentLocale === 'fr' ? exp.description_fr : exp.description_en }}
                 </p>
               </div>
@@ -484,11 +508,11 @@
     </section>
 
     <!-- Education Section -->
-    <section id="education" class="py-20 bg-gray-50">
+    <section id="education" class="py-20 bg-gray-50 dark:bg-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <span class="inline-block bg-teal-50 text-teal-700 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('education.title') }}</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">{{ t('education.subtitle') }}</h2>
+          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('education.title') }}</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('education.subtitle') }}</h2>
           <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
         </div>
 
@@ -501,27 +525,27 @@
               :key="edu.id"
               class="relative sm:pl-20"
             >
-              <div class="absolute left-5 top-6 w-6 h-6 rounded-full bg-teal-600 border-4 border-white shadow-md hidden sm:flex items-center justify-center">
+              <div class="absolute left-5 top-6 w-6 h-6 rounded-full bg-teal-600 border-4 border-white dark:border-gray-800 shadow-md hidden sm:flex items-center justify-center">
                 <div class="w-2 h-2 rounded-full bg-white"></div>
               </div>
 
-              <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
+              <div class="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700">
                 <div class="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <h3 class="text-xl font-bold text-gray-900">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">
                       {{ currentLocale === 'fr' ? edu.degree_fr : edu.degree_en }}
                     </h3>
-                    <p class="text-teal-600 font-semibold mt-1">
+                    <p class="text-teal-600 dark:text-teal-400 font-semibold mt-1">
                       {{ currentLocale === 'fr' ? edu.field_fr : edu.field_en }}
                     </p>
-                    <p class="text-gray-500 mt-1">🎓 {{ edu.school }}</p>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">🎓 {{ edu.school }}</p>
                   </div>
-                  <div class="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg">
+                  <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-lg">
                     <span>📅</span>
                     <span>{{ edu.start_year }} — {{ edu.end_year || 'Présent' }}</span>
                   </div>
                 </div>
-                <p v-if="currentLocale === 'fr' ? edu.description_fr : edu.description_en" class="text-gray-600 mt-4 leading-relaxed">
+                <p v-if="currentLocale === 'fr' ? edu.description_fr : edu.description_en" class="text-gray-600 dark:text-gray-300 mt-4 leading-relaxed">
                   {{ currentLocale === 'fr' ? edu.description_fr : edu.description_en }}
                 </p>
               </div>
@@ -532,11 +556,11 @@
     </section>
 
     <!-- Certificates Section -->
-    <section id="certificates" class="py-20 bg-white">
+    <section id="certificates" class="py-20 bg-white dark:bg-gray-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <span class="inline-block bg-teal-50 text-teal-700 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('certificates.title') }}</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">{{ t('certificates.subtitle') }}</h2>
+          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('certificates.title') }}</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('certificates.subtitle') }}</h2>
           <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
         </div>
 
@@ -544,23 +568,23 @@
           <div
             v-for="cert in certificates"
             :key="cert.id"
-            class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-200 hover:-translate-y-1 border border-gray-100 flex flex-col"
+            class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-200 hover:-translate-y-1 border border-gray-100 dark:border-gray-700 flex flex-col"
           >
             <div class="flex items-start gap-4 mb-4">
               <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center flex-shrink-0 shadow-md">
                 <span class="text-2xl">🏆</span>
               </div>
               <div>
-                <h3 class="font-bold text-gray-900 leading-tight">
+                <h3 class="font-bold text-gray-900 dark:text-white leading-tight">
                   {{ currentLocale === 'fr' ? cert.title_fr : cert.title_en }}
                 </h3>
-                <p class="text-teal-600 font-medium text-sm mt-1">{{ cert.organization }}</p>
+                <p class="text-teal-600 dark:text-teal-400 font-medium text-sm mt-1">{{ cert.organization }}</p>
               </div>
             </div>
-            <p v-if="currentLocale === 'fr' ? cert.description_fr : cert.description_en" class="text-gray-600 text-sm flex-1 mb-4">
+            <p v-if="currentLocale === 'fr' ? cert.description_fr : cert.description_en" class="text-gray-600 dark:text-gray-300 text-sm flex-1 mb-4">
               {{ currentLocale === 'fr' ? cert.description_fr : cert.description_en }}
             </p>
-            <div class="space-y-1 text-sm text-gray-500">
+            <div class="space-y-1 text-sm text-gray-500 dark:text-gray-400">
               <div class="flex items-center gap-1">
                 <span>📅</span> {{ t('certificates.issued') }}: {{ formatDate(cert.issued_date) }}
               </div>
@@ -682,7 +706,7 @@
         <!-- Cards -->
         <div class="flex flex-wrap justify-center gap-5">
           <div
-            v-for="(hobby, index) in hobbies"
+            v-for="hobby in hobbies"
             :key="hobby.id"
             class="group relative flex items-center gap-4 px-6 py-5 rounded-2xl cursor-default transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
             :style="{
@@ -712,74 +736,67 @@
               <span class="block text-xs mt-0.5" :style="{ color: hobby.color }">Passion</span>
             </div>
 
-            <!-- Number badge -->
-            <div
-              class="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shadow"
-              :style="{ background: hobby.color }"
-            >
-              {{ index + 1 }}
-            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-gray-50">
+    <section id="contact" class="py-20 bg-gray-50 dark:bg-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <span class="inline-block bg-teal-50 text-teal-700 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('contact.title') }}</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">{{ t('contact.subtitle') }}</h2>
+          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('contact.title') }}</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('contact.subtitle') }}</h2>
           <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
         </div>
 
         <div class="grid lg:grid-cols-2 gap-12">
           <!-- Contact form -->
-          <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+          <div class="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
             <div v-if="formSuccess" class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl flex items-center gap-2">
               <span>✅</span> {{ t('contact.success') }}
             </div>
             <form @submit.prevent="submitContact" class="space-y-5">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ t('contact.name') }}</label>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ t('contact.name') }}</label>
                 <input
                   v-model="form.name"
                   type="text"
                   required
-                  class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  class="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   :placeholder="t('contact.name')"
                 />
                 <span v-if="formErrors.name" class="text-red-500 text-sm">{{ formErrors.name }}</span>
               </div>
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ t('contact.email') }}</label>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ t('contact.email') }}</label>
                 <input
                   v-model="form.email"
                   type="email"
                   required
-                  class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  class="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   :placeholder="t('contact.email')"
                 />
                 <span v-if="formErrors.email" class="text-red-500 text-sm">{{ formErrors.email }}</span>
               </div>
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ t('contact.subject') }}</label>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ t('contact.subject') }}</label>
                 <input
                   v-model="form.subject"
                   type="text"
                   required
-                  class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  class="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   :placeholder="t('contact.subject')"
                 />
                 <span v-if="formErrors.subject" class="text-red-500 text-sm">{{ formErrors.subject }}</span>
               </div>
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ t('contact.message') }}</label>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ t('contact.message') }}</label>
                 <textarea
                   v-model="form.message"
                   rows="5"
                   required
-                  class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all resize-none"
+                  class="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all resize-none"
                   :placeholder="t('contact.message')"
                 ></textarea>
                 <span v-if="formErrors.message" class="text-red-500 text-sm">{{ formErrors.message }}</span>
@@ -797,47 +814,47 @@
 
           <!-- Contact info -->
           <div class="space-y-6">
-            <h3 class="text-xl font-bold text-gray-900">{{ t('contact.info_title') }}</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ t('contact.info_title') }}</h3>
 
             <div class="space-y-4">
               <a
                 v-if="profile?.email"
                 :href="'mailto:' + profile.email"
-                class="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 group"
+                class="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all duration-200 hover:-translate-y-0.5 group"
               >
-                <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-2xl group-hover:bg-teal-600 transition-colors">
+                <div class="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-xl flex items-center justify-center text-2xl group-hover:bg-teal-600 transition-colors">
                   <span>✉️</span>
                 </div>
                 <div>
-                  <div class="text-xs text-gray-500 font-medium">Email</div>
-                  <div class="font-semibold text-gray-900">{{ profile.email }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Email</div>
+                  <div class="font-semibold text-gray-900 dark:text-white">{{ profile.email }}</div>
                 </div>
               </a>
 
               <a
                 v-if="profile?.phone"
                 :href="'tel:' + profile.phone"
-                class="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 group"
+                class="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all duration-200 hover:-translate-y-0.5 group"
               >
-                <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-2xl group-hover:bg-teal-600 transition-colors">
+                <div class="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-xl flex items-center justify-center text-2xl group-hover:bg-teal-600 transition-colors">
                   <span>📱</span>
                 </div>
                 <div>
-                  <div class="text-xs text-gray-500 font-medium">Téléphone</div>
-                  <div class="font-semibold text-gray-900">{{ profile.phone }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Téléphone</div>
+                  <div class="font-semibold text-gray-900 dark:text-white">{{ profile.phone }}</div>
                 </div>
               </a>
 
               <div
                 v-if="profile?.location"
-                class="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-gray-100"
+                class="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
               >
-                <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-2xl">
+                <div class="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-xl flex items-center justify-center text-2xl">
                   <span>📍</span>
                 </div>
                 <div>
-                  <div class="text-xs text-gray-500 font-medium">Localisation</div>
-                  <div class="font-semibold text-gray-900">{{ profile.location }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Localisation</div>
+                  <div class="font-semibold text-gray-900 dark:text-white">{{ profile.location }}</div>
                 </div>
               </div>
             </div>
@@ -903,7 +920,7 @@ const { t, locale } = useI18n()
 const page = usePage()
 
 const currentLocale = ref(props.locale || 'fr')
-const darkMode = ref(false)
+const darkMode = ref(true)
 const scrolled = ref(false)
 const mobileMenu = ref(false)
 const formSubmitting = ref(false)

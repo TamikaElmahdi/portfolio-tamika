@@ -1,0 +1,27 @@
+<!-- <IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule> -->
+
+
+
+cat > ~/domains/elmahditamika.com/public_html/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Serve build assets
+    RewriteRule ^build/(.*)$ portfolio/public/build/$1 [L]
+
+    # Serve storage files via symlink
+    RewriteRule ^storage/(.*)$ portfolio/public/storage/$1 [L]
+
+    # Serve favicons
+    RewriteRule ^favicon\.ico$ portfolio/public/favicon.ico [L]
+    RewriteRule ^favicon\.svg$ portfolio/public/favicon.svg [L]
+
+    # All other requests go to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+EOF
