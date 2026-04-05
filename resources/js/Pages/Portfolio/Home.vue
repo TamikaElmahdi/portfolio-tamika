@@ -239,6 +239,7 @@ import { Head } from '@inertiajs/vue3'
           </div>
         </div>
 
+        <h1>test</h1>
         <!-- Scroll indicator -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce">
           <span class="text-xs">{{ t('hero.scroll') }}</span>
