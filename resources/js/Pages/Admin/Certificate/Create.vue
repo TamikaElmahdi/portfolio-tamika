@@ -5,6 +5,7 @@
         <form @submit.prevent="submit" class="space-y-6">
           <div class="grid sm:grid-cols-2 gap-6">
             <div>
+              <!-- //change the name of the input to title_fr and title_en -->
               <label class="block text-sm font-semibold text-gray-700 mb-2">Titre (FR) *</label>
               <input v-model="form.title_fr" type="text" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" />
             </div>
