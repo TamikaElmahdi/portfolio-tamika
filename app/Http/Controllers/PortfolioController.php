@@ -10,6 +10,7 @@ use App\Models\Message;
 use App\Models\Profile;
 use App\Models\Project;
 use App\Models\Skill;
+use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,6 +29,7 @@ class PortfolioController extends Controller
         $certificates = Certificate::orderBy('order')->orderBy('issued_date', 'desc')->get();
         $hobbies = Hobby::orderBy('order')->get();
         $projects = Project::orderBy('order')->get();
+        $testimonials = Testimonial::orderBy('order')->get();
 
         return Inertia::render('Portfolio/Home', [
             'profile' => $profile,
@@ -37,6 +39,7 @@ class PortfolioController extends Controller
             'certificates' => $certificates,
             'hobbies' => $hobbies,
             'projects' => $projects,
+            'testimonials' => $testimonials,
             'locale' => $locale,
         ]);
     }

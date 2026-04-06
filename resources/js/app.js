@@ -9,11 +9,11 @@ const messages = {
             home: 'Accueil',
             about: 'À propos',
             skills: 'Compétences',
-            experience: 'Expérience',
-            education: 'Formation',
+            parcours: 'Parcours',
             certificates: 'Certifications',
             projects: 'Projets',
             hobbies: 'Loisirs',
+            testimonials: 'Témoignages',
             contact: 'Contact',
         },
         hero: {
@@ -53,6 +53,15 @@ const messages = {
             title: 'Formation',
             subtitle: 'Mon parcours académique',
         },
+        timeline: {
+            title: 'Expériences & Formations',
+            subtitle: 'Mon parcours complet',
+            filter_all: 'Tout',
+            filter_exp: 'Expériences',
+            filter_edu: 'Formations',
+            exp_label: 'Expérience',
+            edu_label: 'Formation',
+        },
         certificates: {
             title: 'Certifications',
             subtitle: 'Mes certifications professionnelles',
@@ -70,6 +79,15 @@ const messages = {
         hobbies: {
             title: 'Loisirs & Intérêts',
             subtitle: 'Ce qui me passionne en dehors du code',
+        },
+        testimonials: {
+            title: 'Témoignages',
+            subtitle: 'Ce que disent ceux qui ont travaillé avec moi',
+            colleague: 'Collègue',
+            client: 'Client',
+            supervisor: 'Superviseur',
+            mentor: 'Mentor',
+            view_linkedin: 'Voir sur LinkedIn',
         },
         contact: {
             title: 'Me Contacter',
@@ -109,11 +127,11 @@ const messages = {
             home: 'Home',
             about: 'About',
             skills: 'Skills',
-            experience: 'Experience',
-            education: 'Education',
+            parcours: 'Journey',
             certificates: 'Certificates',
             projects: 'Projects',
             hobbies: 'Hobbies',
+            testimonials: 'Testimonials',
             contact: 'Contact',
         },
         hero: {
@@ -153,6 +171,15 @@ const messages = {
             title: 'Education',
             subtitle: 'My academic background',
         },
+        timeline: {
+            title: 'Experience & Education',
+            subtitle: 'My complete journey',
+            filter_all: 'All',
+            filter_exp: 'Experience',
+            filter_edu: 'Education',
+            exp_label: 'Experience',
+            edu_label: 'Education',
+        },
         certificates: {
             title: 'Certifications',
             subtitle: 'My professional certifications',
@@ -170,6 +197,15 @@ const messages = {
         hobbies: {
             title: 'Hobbies & Interests',
             subtitle: 'What I am passionate about outside of code',
+        },
+        testimonials: {
+            title: 'Testimonials',
+            subtitle: 'What people who worked with me say',
+            colleague: 'Colleague',
+            client: 'Client',
+            supervisor: 'Supervisor',
+            mentor: 'Mentor',
+            view_linkedin: 'View on LinkedIn',
         },
         contact: {
             title: 'Contact Me',

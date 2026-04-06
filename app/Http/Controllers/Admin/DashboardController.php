@@ -10,6 +10,7 @@ use App\Models\Hobby;
 use App\Models\Message;
 use App\Models\Project;
 use App\Models\Skill;
+use App\Models\Testimonial;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,6 +26,7 @@ class DashboardController extends Controller
                 'certificates' => Certificate::count(),
                 'hobbies' => Hobby::count(),
                 'projects' => Project::count(),
+                'testimonials' => Testimonial::count(),
                 'messages' => Message::count(),
                 'unread_messages' => Message::whereNull('read_at')->count(),
             ],

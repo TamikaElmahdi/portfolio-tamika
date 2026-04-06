@@ -29,6 +29,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('hobbies', Admin\HobbyController::class)->except(['show']);
     Route::resource('projects', Admin\ProjectController::class)->except(['show']);
 
+    // Testimonials
+    Route::resource('testimonials', Admin\TestimonialController::class)->except(['show']);
+
     // Messages
     Route::get('/messages', [Admin\MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{message}', [Admin\MessageController::class, 'show'])->name('messages.show');

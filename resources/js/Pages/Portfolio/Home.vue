@@ -445,111 +445,182 @@ import { Head } from '@inertiajs/vue3'
       </div>
     </section>
 
-    <!-- Experience Section -->
-    <section id="experience" class="py-20 bg-white dark:bg-gray-900">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('experience.title') }}</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('experience.subtitle') }}</h2>
+    <!-- Timeline Section -->
+    <section id="parcours" class="py-20 bg-white dark:bg-gray-900 overflow-hidden">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('timeline.title') }}</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('timeline.subtitle') }}</h2>
           <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
         </div>
 
+        <!-- Filter tabs -->
+        <div class="flex justify-center gap-3 mb-14 flex-wrap">
+          <button
+            @click="timelineFilter = 'all'"
+            class="px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+            :class="timelineFilter === 'all'
+              ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+          >
+            {{ t('timeline.filter_all') }}
+          </button>
+          <button
+            @click="timelineFilter = 'experience'"
+            class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+            :class="timelineFilter === 'experience'
+              ? 'bg-teal-600 text-white shadow-md'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-900/20'"
+          >
+            <span>💼</span> {{ t('timeline.filter_exp') }}
+          </button>
+          <button
+            @click="timelineFilter = 'education'"
+            class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+            :class="timelineFilter === 'education'
+              ? 'bg-indigo-600 text-white shadow-md'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20'"
+          >
+            <span>🎓</span> {{ t('timeline.filter_edu') }}
+          </button>
+        </div>
+
+        <!-- Timeline -->
         <div class="relative">
-          <!-- Timeline line -->
-          <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-teal-100 hidden sm:block"></div>
+          <!-- Vertical line — center on desktop, left on mobile -->
+          <div
+            class="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 hidden md:block"
+            style="background: linear-gradient(to bottom, #14b8a6 0%, #818cf8 100%);"
+          ></div>
+          <div
+            class="absolute left-5 top-0 bottom-0 w-0.5 md:hidden"
+            style="background: linear-gradient(to bottom, #14b8a6 0%, #818cf8 100%);"
+          ></div>
 
-          <div class="space-y-8">
+          <div class="space-y-10">
             <div
-              v-for="exp in experiences"
-              :key="exp.id"
-              class="relative sm:pl-20"
+              v-for="(item, index) in filteredTimelineItems"
+              :key="item.id"
+              :data-timeline-id="item.id"
+              class="relative flex items-start md:items-center pl-14 md:pl-0"
+              :class="index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'"
             >
-              <!-- Timeline dot -->
-              <div class="absolute left-5 top-6 w-6 h-6 rounded-full bg-teal-600 border-4 border-white dark:border-gray-900 shadow-md hidden sm:flex items-center justify-center">
-                <div class="w-2 h-2 rounded-full bg-white"></div>
-              </div>
+              <!-- Card -->
+              <div
+                class="w-full md:w-[calc(50%-2.5rem)] transition-all duration-700 ease-out"
+                :class="index % 2 === 0 ? 'md:mr-10' : 'md:ml-10'"
+                :style="{
+                  opacity: visibleItems.has(item.id) ? 1 : 0,
+                  transform: visibleItems.has(item.id)
+                    ? 'translateX(0)'
+                    : (index % 2 === 0 ? 'translateX(-36px)' : 'translateX(36px)'),
+                  transitionDelay: visibleItems.has(item.id) ? ((index % 4) * 0.1) + 's' : '0s',
+                }"
+              >
+                <div
+                  class="group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border hover:-translate-y-1"
+                  :class="item.type === 'experience'
+                    ? 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-700'
+                    : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700'"
+                >
+                  <!-- Colored top accent -->
+                  <div
+                    class="h-1 w-full"
+                    :class="item.type === 'experience'
+                      ? 'bg-gradient-to-r from-teal-400 to-teal-600'
+                      : 'bg-gradient-to-r from-indigo-400 to-indigo-600'"
+                  ></div>
 
-              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700">
-                <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
-                  <div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-                      {{ currentLocale === 'fr' ? exp.position_fr : exp.position_en }}
-                    </h3>
-                    <div class="flex items-center gap-2 mt-1">
-                      <span class="font-semibold text-teal-600 dark:text-teal-400">{{ exp.company }}</span>
-                      <span v-if="exp.location" class="text-gray-400 dark:text-gray-500 text-sm">• {{ exp.location }}</span>
-                    </div>
-                  </div>
-                  <div class="flex flex-col items-end gap-2">
-                    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span>📅</span>
-                      <span>
-                        {{ formatDate(exp.start_date) }} —
-                        {{ exp.is_current ? t('experience.present') : formatDate(exp.end_date) }}
+                  <div class="p-6">
+                    <!-- Type badge + current badge -->
+                    <div
+                      class="flex items-center gap-2 mb-3 flex-wrap"
+                      :class="index % 2 === 0 ? 'md:justify-end' : ''"
+                    >
+                      <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
+                        :class="item.type === 'experience'
+                          ? 'bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300'
+                          : 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'"
+                      >
+                        <span>{{ item.type === 'experience' ? '💼' : '🎓' }}</span>
+                        {{ item.type === 'experience' ? t('timeline.exp_label') : t('timeline.edu_label') }}
+                      </span>
+                      <span
+                        v-if="item.isCurrent"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                      >
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block"></span>
+                        {{ t('experience.current') }}
                       </span>
                     </div>
-                    <span
-                      v-if="exp.is_current"
-                      class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full"
-                    >{{ t('experience.current') }}</span>
-                    <span
-                      v-if="exp.contract_type"
-                      class="px-3 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full"
-                    >{{ exp.contract_type }}</span>
-                  </div>
-                </div>
-                <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {{ currentLocale === 'fr' ? exp.description_fr : exp.description_en }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Education Section -->
-    <section id="education" class="py-20 bg-gray-50 dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">{{ t('education.title') }}</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('education.subtitle') }}</h2>
-          <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
-        </div>
-
-        <div class="relative">
-          <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-teal-100 hidden sm:block"></div>
-
-          <div class="space-y-8">
-            <div
-              v-for="edu in educations"
-              :key="edu.id"
-              class="relative sm:pl-20"
-            >
-              <div class="absolute left-5 top-6 w-6 h-6 rounded-full bg-teal-600 border-4 border-white dark:border-gray-800 shadow-md hidden sm:flex items-center justify-center">
-                <div class="w-2 h-2 rounded-full bg-white"></div>
-              </div>
-
-              <div class="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700">
-                <div class="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-                      {{ currentLocale === 'fr' ? edu.degree_fr : edu.degree_en }}
+                    <!-- Title -->
+                    <h3
+                      class="text-lg font-bold text-gray-900 dark:text-white leading-tight"
+                      :class="index % 2 === 0 ? 'md:text-right' : ''"
+                    >
+                      {{ item.title }}
                     </h3>
-                    <p class="text-teal-600 dark:text-teal-400 font-semibold mt-1">
-                      {{ currentLocale === 'fr' ? edu.field_fr : edu.field_en }}
-                    </p>
-                    <p class="text-gray-500 dark:text-gray-400 mt-1">🎓 {{ edu.school }}</p>
-                  </div>
-                  <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-lg">
-                    <span>📅</span>
-                    <span>{{ edu.start_year }} — {{ edu.end_year || 'Présent' }}</span>
+
+                    <!-- Organization + location -->
+                    <div
+                      class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1"
+                      :class="index % 2 === 0 ? 'md:justify-end' : ''"
+                    >
+                      <span
+                        class="font-semibold text-sm"
+                        :class="item.type === 'experience' ? 'text-teal-600 dark:text-teal-400' : 'text-indigo-600 dark:text-indigo-400'"
+                      >{{ item.organization }}</span>
+                      <span v-if="item.subtitle" class="text-gray-500 dark:text-gray-400 text-sm">• {{ item.subtitle }}</span>
+                      <span v-if="item.location" class="text-gray-400 dark:text-gray-500 text-xs">📍 {{ item.location }}</span>
+                    </div>
+
+                    <!-- Period + contract badge -->
+                    <div
+                      class="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400"
+                      :class="index % 2 === 0 ? 'md:justify-end' : ''"
+                    >
+                      <span class="inline-flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        {{ item.period }}
+                      </span>
+                      <span
+                        v-if="item.badge"
+                        class="px-2 py-0.5 rounded-full font-medium bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800"
+                      >{{ item.badge }}</span>
+                    </div>
+
+                    <!-- Description -->
+                    <p
+                      v-if="item.description"
+                      class="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed"
+                      :class="index % 2 === 0 ? 'md:text-right' : ''"
+                    >{{ item.description }}</p>
                   </div>
                 </div>
-                <p v-if="currentLocale === 'fr' ? edu.description_fr : edu.description_en" class="text-gray-600 dark:text-gray-300 mt-4 leading-relaxed">
-                  {{ currentLocale === 'fr' ? edu.description_fr : edu.description_en }}
-                </p>
               </div>
+
+              <!-- Center dot (desktop) -->
+              <div
+                class="absolute left-1/2 w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow-lg z-10 hidden md:block"
+                :class="item.type === 'experience' ? 'bg-teal-500' : 'bg-indigo-500'"
+                :style="{
+                  transform: `translateX(-50%) scale(${visibleItems.has(item.id) ? 1 : 0.2})`,
+                  opacity: visibleItems.has(item.id) ? 1 : 0,
+                  transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transitionDelay: visibleItems.has(item.id) ? ((index % 4) * 0.1 + 0.15) + 's' : '0s',
+                }"
+              ></div>
+
+              <!-- Mobile dot -->
+              <div
+                class="absolute left-3 top-7 w-4 h-4 rounded-full border-4 border-white dark:border-gray-900 shadow-md z-10 md:hidden"
+                :class="item.type === 'experience' ? 'bg-teal-500' : 'bg-indigo-500'"
+              ></div>
             </div>
           </div>
         </div>
@@ -742,6 +813,128 @@ import { Head } from '@inertiajs/vue3'
       </div>
     </section>
 
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-24 bg-white dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-16">
+          <span class="inline-block bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-semibold px-4 py-2 rounded-full mb-4">
+            💬 {{ t('testimonials.title') }}
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{{ t('testimonials.subtitle') }}</h2>
+          <div class="mt-4 h-1 w-16 bg-teal-500 mx-auto rounded-full"></div>
+        </div>
+
+        <!-- Empty state -->
+        <div v-if="!testimonials || testimonials.length === 0" class="text-center py-16 text-gray-400 dark:text-gray-600">
+          <div class="text-6xl mb-4">💬</div>
+          <p class="text-lg font-medium">Les témoignages arrivent bientôt...</p>
+        </div>
+
+        <!-- Carousel -->
+        <div v-else class="relative">
+          <!-- Cards wrapper -->
+          <div class="overflow-hidden">
+            <div
+              class="flex transition-transform duration-500 ease-in-out"
+              :style="{ transform: 'translateX(-' + testimonialIndex * 100 + '%)' }"
+            >
+              <div
+                v-for="testimonial in testimonials"
+                :key="testimonial.id"
+                class="w-full shrink-0 px-4"
+              >
+                <div class="max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800 rounded-3xl p-8 sm:p-10 shadow-sm border border-gray-100 dark:border-gray-700 relative">
+                  <!-- Quote icon -->
+                  <div class="absolute top-8 right-8 text-6xl text-teal-100 dark:text-teal-900 font-serif leading-none select-none">"</div>
+
+                  <!-- Stars -->
+                  <div class="flex gap-1 mb-6">
+                    <span
+                      v-for="n in 5"
+                      :key="n"
+                      class="text-xl"
+                      :class="n <= testimonial.rating ? 'text-yellow-400' : 'text-gray-200 dark:text-gray-700'"
+                    >★</span>
+                  </div>
+
+                  <!-- Content -->
+                  <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed italic mb-8 relative z-10">
+                    "{{ currentLocale === 'fr' ? testimonial.content_fr : (testimonial.content_en || testimonial.content_fr) }}"
+                  </p>
+
+                  <!-- Author -->
+                  <div class="flex items-center gap-4">
+                    <!-- Avatar -->
+                    <div class="w-14 h-14 rounded-full overflow-hidden bg-teal-100 dark:bg-teal-900 flex items-center justify-center shrink-0 border-2 border-teal-200 dark:border-teal-700">
+                      <img
+                        v-if="testimonial.author_avatar"
+                        :src="'/storage/' + testimonial.author_avatar"
+                        :alt="testimonial.author_name"
+                        class="w-full h-full object-cover"
+                      />
+                      <span v-else class="text-2xl text-teal-500">{{ testimonial.author_name?.charAt(0) }}</span>
+                    </div>
+                    <!-- Info -->
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <p class="font-bold text-gray-900 dark:text-white">{{ testimonial.author_name }}</p>
+                        <span v-if="testimonial.featured" class="text-xs bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 font-semibold px-2 py-0.5 rounded-full">⭐ Featured</span>
+                      </div>
+                      <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">
+                        {{ testimonial.author_position }}{{ testimonial.author_company ? ' — ' + testimonial.author_company : '' }}
+                      </p>
+                      <p v-if="testimonial.relation" class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                        {{ t('testimonials.' + testimonial.relation) }}
+                      </p>
+                    </div>
+                    <!-- LinkedIn -->
+                    <a
+                      v-if="testimonial.linkedin_url"
+                      :href="testimonial.linkedin_url"
+                      target="_blank"
+                      rel="noopener"
+                      class="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-xl flex items-center justify-center transition-colors shrink-0"
+                      :title="t('testimonials.view_linkedin')"
+                    >
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation arrows -->
+          <button
+            v-if="testimonials.length > 1"
+            @click="testimonialIndex = (testimonialIndex - 1 + testimonials.length) % testimonials.length"
+            class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 w-10 h-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center shadow-md hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:text-teal-600 transition-colors"
+          >
+            ‹
+          </button>
+          <button
+            v-if="testimonials.length > 1"
+            @click="testimonialIndex = (testimonialIndex + 1) % testimonials.length"
+            class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 w-10 h-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center shadow-md hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:text-teal-600 transition-colors"
+          >
+            ›
+          </button>
+
+          <!-- Dots -->
+          <div v-if="testimonials.length > 1" class="flex justify-center gap-2 mt-8">
+            <button
+              v-for="(_, i) in testimonials"
+              :key="i"
+              @click="testimonialIndex = i"
+              class="w-2.5 h-2.5 rounded-full transition-all duration-300"
+              :class="i === testimonialIndex ? 'bg-teal-500 w-6' : 'bg-gray-300 dark:bg-gray-600 hover:bg-teal-300'"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Contact Section -->
     <section id="contact" class="py-20 bg-gray-50 dark:bg-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -894,7 +1087,7 @@ import { Head } from '@inertiajs/vue3'
           &copy; {{ new Date().getFullYear() }} {{ profile?.name }}. Tous droits réservés.
         </p>
         <p class="text-xs mt-2 text-gray-600">
-          Développé avec Laravel + Vue.js + Tailwind CSS
+          Elmahdi Tamika
         </p>
       </div>
     </footer>
@@ -902,7 +1095,7 @@ import { Head } from '@inertiajs/vue3'
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 
@@ -914,6 +1107,7 @@ const props = defineProps({
   certificates: Array,
   hobbies: Array,
   projects: Array,
+  testimonials: Array,
   locale: String,
 })
 
@@ -927,6 +1121,9 @@ const mobileMenu = ref(false)
 const formSubmitting = ref(false)
 const formSuccess = ref(false)
 const formErrors = ref({})
+const timelineFilter = ref('all')
+const visibleItems = ref(new Set())
+const testimonialIndex = ref(0)
 
 const form = ref({
   name: '',
@@ -935,38 +1132,100 @@ const form = ref({
   message: '',
 })
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return date.toLocaleDateString(currentLocale.value === 'fr' ? 'fr-FR' : 'en-US', { month: 'long', year: 'numeric' })
+}
+
 const navLinks = computed(() => [
   { id: 'home', label: t('nav.home') },
   { id: 'about', label: t('nav.about') },
   { id: 'skills', label: t('nav.skills') },
-  { id: 'experience', label: t('nav.experience') },
-  { id: 'education', label: t('nav.education') },
+  { id: 'parcours', label: t('nav.parcours') },
   { id: 'projects', label: t('nav.projects') },
+  { id: 'testimonials', label: t('nav.testimonials') },
   { id: 'contact', label: t('nav.contact') },
 ])
+
+const timelineItems = computed(() => {
+  const items = []
+  ;(props.experiences || []).forEach(exp => {
+    items.push({
+      id: 'exp-' + exp.id,
+      type: 'experience',
+      sortDate: exp.start_date ? new Date(exp.start_date) : new Date(0),
+      title: currentLocale.value === 'fr' ? exp.position_fr : exp.position_en,
+      organization: exp.company,
+      location: exp.location,
+      period: formatDate(exp.start_date) + ' — ' + (exp.is_current ? t('experience.present') : formatDate(exp.end_date)),
+      isCurrent: exp.is_current,
+      description: currentLocale.value === 'fr' ? exp.description_fr : exp.description_en,
+      badge: exp.contract_type,
+    })
+  })
+  ;(props.educations || []).forEach(edu => {
+    items.push({
+      id: 'edu-' + edu.id,
+      type: 'education',
+      sortDate: edu.start_year ? new Date(edu.start_year + '-01-01') : new Date(0),
+      title: currentLocale.value === 'fr' ? edu.degree_fr : edu.degree_en,
+      organization: edu.school,
+      subtitle: currentLocale.value === 'fr' ? edu.field_fr : edu.field_en,
+      period: edu.start_year + ' — ' + (edu.end_year || (currentLocale.value === 'fr' ? 'Présent' : 'Present')),
+      description: currentLocale.value === 'fr' ? edu.description_fr : edu.description_en,
+    })
+  })
+  return items.sort((a, b) => b.sortDate - a.sortDate)
+})
+
+const filteredTimelineItems = computed(() => {
+  if (timelineFilter.value === 'all') return timelineItems.value
+  return timelineItems.value.filter(item => item.type === timelineFilter.value)
+})
 
 const handleScroll = () => {
   scrolled.value = window.scrollY > 50
 }
 
+let timelineObserver = null
+
+const setupTimelineObserver = async () => {
+  await nextTick()
+  if (timelineObserver) timelineObserver.disconnect()
+  timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.dataset.timelineId
+        if (id && !visibleItems.value.has(id)) {
+          visibleItems.value = new Set([...visibleItems.value, id])
+        }
+      }
+    })
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' })
+  document.querySelectorAll('[data-timeline-id]').forEach(el => {
+    timelineObserver.observe(el)
+  })
+}
+
+watch(filteredTimelineItems, () => {
+  setupTimelineObserver()
+})
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   locale.value = currentLocale.value
+  setupTimelineObserver()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  if (timelineObserver) timelineObserver.disconnect()
 })
 
 const toggleLocale = () => {
   currentLocale.value = currentLocale.value === 'fr' ? 'en' : 'fr'
   locale.value = currentLocale.value
-}
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return date.toLocaleDateString(currentLocale.value === 'fr' ? 'fr-FR' : 'en-US', { month: 'long', year: 'numeric' })
 }
 
 const getCategoryIcon = (category) => {

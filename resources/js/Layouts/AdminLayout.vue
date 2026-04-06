@@ -123,6 +123,7 @@ const navItems = [
   { href: '/admin/certificates', icon: '🏆', label: 'Certifications' },
   { href: '/admin/projects', icon: '🚀', label: 'Projets' },
   { href: '/admin/hobbies', icon: '🎯', label: 'Loisirs' },
+  { href: '/admin/testimonials', icon: '💬', label: 'Témoignages' },
   { href: '/admin/messages', icon: '✉️', label: 'Messages' },
 ]
 
