@@ -32,4 +32,17 @@ jobs:
           remote_path: '/home/u528979203/domains/elmahditamika.com/public_html/portfolio'
           sftp_only: true
           delete_remote_files: false
+
+      - name: Clear Laravel cache via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 65002
+          script: |
+            cd /home/u528979203/domains/elmahditamika.com/public_html/portfolio
+            php artisan route:clear
+            php artisan config:clear
+            php artisan view:clear
           
