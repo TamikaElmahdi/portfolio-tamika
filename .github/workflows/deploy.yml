@@ -32,3 +32,4 @@ jobs:
           remote_path: '/home/u528979203/domains/elmahditamika.com/public_html/portfolio'
           sftp_only: true
           delete_remote_files: false
+          
