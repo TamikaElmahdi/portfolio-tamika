@@ -19,6 +19,5 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $app->handleRequest(Request::capture());
 
-
 // <?php
 // require __DIR__.'/portfolio/public/index.php';
