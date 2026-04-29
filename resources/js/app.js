@@ -75,6 +75,7 @@ const messages = {
             demo: 'Démo',
             github: 'Code source',
             view_all: 'Voir tous les projets',
+            view_details: 'Voir les détails',
         },
         hobbies: {
             title: 'Loisirs & Intérêts',
@@ -193,6 +194,7 @@ const messages = {
             demo: 'Demo',
             github: 'Source code',
             view_all: 'View all projects',
+            view_details: 'View details',
         },
         hobbies: {
             title: 'Hobbies & Interests',

@@ -28,7 +28,7 @@ class PortfolioController extends Controller
         $skills = Skill::orderBy('order')->get()->groupBy('category');
         $certificates = Certificate::orderBy('order')->orderBy('issued_date', 'desc')->get();
         $hobbies = Hobby::orderBy('order')->get();
-        $projects = Project::orderBy('order')->get();
+        $projects = Project::with('images')->orderBy('order')->get();
         $testimonials = Testimonial::orderBy('order')->get();
 
         return Inertia::render('Portfolio/Home', [

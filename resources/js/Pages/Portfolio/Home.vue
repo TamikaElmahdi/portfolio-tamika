@@ -692,21 +692,32 @@ import { Head } from '@inertiajs/vue3'
           <div
             v-for="project in projects"
             :key="project.id"
-            class="bg-white/10 backdrop-blur rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-200 hover:-translate-y-1 border border-white/10"
+            class="bg-white/10 backdrop-blur rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-200 hover:-translate-y-1 border border-white/10 cursor-pointer group"
+            @click="openProject(project)"
           >
             <!-- Project image -->
             <div class="h-48 bg-gradient-to-br from-teal-600 to-teal-800 relative overflow-hidden">
               <img
-                v-if="project.image"
-                :src="'/storage/' + project.image"
+                v-if="project.images && project.images.length"
+                :src="'/storage/' + project.images[0].path"
                 :alt="currentLocale === 'fr' ? project.title_fr : project.title_en"
-                class="w-full h-full object-cover"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div v-else class="w-full h-full flex items-center justify-center">
                 <span class="text-6xl opacity-40">🚀</span>
               </div>
+              <!-- Image count badge -->
+              <div v-if="project.images && project.images.length > 1" class="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                📷 {{ project.images.length }}
+              </div>
               <div v-if="project.featured" class="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
                 ⭐ Featured
+              </div>
+              <!-- View details overlay -->
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                <span class="opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 backdrop-blur text-white text-sm font-semibold px-4 py-2 rounded-full border border-white/30">
+                  {{ t('projects.view_details') }}
+                </span>
               </div>
             </div>
 
@@ -733,7 +744,7 @@ import { Head } from '@inertiajs/vue3'
               </div>
 
               <!-- Links -->
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3" @click.stop>
                 <a
                   v-if="project.demo_url"
                   :href="project.demo_url"
@@ -756,6 +767,110 @@ import { Head } from '@inertiajs/vue3'
         </div>
       </div>
     </section>
+
+    <!-- Project Detail Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="activeProject"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="closeProject"
+        >
+          <!-- Backdrop -->
+          <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="closeProject"></div>
+
+          <!-- Modal -->
+          <div class="relative bg-[#0f3d2e] border border-white/10 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl">
+
+            <!-- Close button -->
+            <button
+              @click="closeProject"
+              class="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+            >✕</button>
+
+            <!-- Image carousel -->
+            <div v-if="activeProject.images && activeProject.images.length" class="relative h-72 sm:h-96 bg-gradient-to-br from-teal-700 to-teal-900 overflow-hidden rounded-t-2xl">
+              <img
+                :src="'/storage/' + activeProject.images[carouselIndex].path"
+                :alt="currentLocale === 'fr' ? activeProject.title_fr : activeProject.title_en"
+                class="w-full h-full object-cover transition-opacity duration-300"
+              />
+              <!-- Prev / Next -->
+              <template v-if="activeProject.images.length > 1">
+                <button
+                  @click="carouselIndex = (carouselIndex - 1 + activeProject.images.length) % activeProject.images.length"
+                  class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors"
+                >‹</button>
+                <button
+                  @click="carouselIndex = (carouselIndex + 1) % activeProject.images.length"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors"
+                >›</button>
+                <!-- Dots -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  <button
+                    v-for="(_, i) in activeProject.images"
+                    :key="i"
+                    @click="carouselIndex = i"
+                    class="w-2 h-2 rounded-full transition-all"
+                    :class="i === carouselIndex ? 'bg-white w-4' : 'bg-white/40'"
+                  ></button>
+                </div>
+              </template>
+              <!-- Featured badge -->
+              <div v-if="activeProject.featured" class="absolute top-4 left-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
+                ⭐ Featured
+              </div>
+            </div>
+            <!-- No image fallback -->
+            <div v-else class="h-40 bg-gradient-to-br from-teal-700 to-teal-900 flex items-center justify-center rounded-t-2xl">
+              <span class="text-7xl opacity-30">🚀</span>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 sm:p-8">
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-4">
+                {{ currentLocale === 'fr' ? activeProject.title_fr : activeProject.title_en }}
+              </h2>
+              <p class="text-white/75 leading-relaxed mb-6">
+                {{ currentLocale === 'fr' ? activeProject.description_fr : activeProject.description_en }}
+              </p>
+
+              <!-- Technologies -->
+              <div v-if="activeProject.technologies && activeProject.technologies.length" class="mb-6">
+                <p class="text-teal-300 text-xs font-semibold uppercase tracking-wider mb-2">Technologies</p>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="tech in activeProject.technologies"
+                    :key="tech"
+                    class="px-3 py-1 bg-teal-500/30 text-teal-200 text-sm font-medium rounded-lg border border-teal-400/20"
+                  >{{ tech }}</span>
+                </div>
+              </div>
+
+              <!-- Links -->
+              <div class="flex flex-wrap gap-3">
+                <a
+                  v-if="activeProject.demo_url"
+                  :href="activeProject.demo_url"
+                  target="_blank"
+                  class="flex items-center gap-2 px-5 py-2.5 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-xl transition-colors"
+                >
+                  <span>🔗</span> {{ t('projects.demo') }}
+                </a>
+                <a
+                  v-if="activeProject.github_url"
+                  :href="activeProject.github_url"
+                  target="_blank"
+                  class="flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-colors border border-white/20"
+                >
+                  <span>💻</span> GitHub
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
     <!-- Hobbies Section -->
     <section id="hobbies" class="py-24 relative overflow-hidden" style="background: linear-gradient(135deg, #0f3d2e 0%, #1a4a3a 50%, #0f3d2e 100%);">
@@ -1125,6 +1240,20 @@ const timelineFilter = ref('all')
 const visibleItems = ref(new Set())
 const testimonialIndex = ref(0)
 
+const activeProject = ref(null)
+const carouselIndex = ref(0)
+
+function openProject(project) {
+  activeProject.value = project
+  carouselIndex.value = 0
+  document.body.style.overflow = 'hidden'
+}
+
+function closeProject() {
+  activeProject.value = null
+  document.body.style.overflow = ''
+}
+
 const form = ref({
   name: '',
   email: '',
@@ -1212,14 +1341,20 @@ watch(filteredTimelineItems, () => {
   setupTimelineObserver()
 })
 
+function handleKeydown(e) {
+  if (e.key === 'Escape') closeProject()
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  window.addEventListener('keydown', handleKeydown)
   locale.value = currentLocale.value
   setupTimelineObserver()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('keydown', handleKeydown)
   if (timelineObserver) timelineObserver.disconnect()
 })
 
@@ -1256,3 +1391,10 @@ const submitContact = async () => {
   })
 }
 </script>
+
+<style scoped>
+.modal-enter-active, .modal-leave-active { transition: opacity 0.2s ease; }
+.modal-enter-from, .modal-leave-to { opacity: 0; }
+.modal-enter-active .relative, .modal-leave-active .relative { transition: transform 0.2s ease; }
+.modal-enter-from .relative, .modal-leave-to .relative { transform: scale(0.95); }
+</style>

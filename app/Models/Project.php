@@ -17,6 +17,11 @@ class Project extends Model
         'order' => 'integer',
     ];
 
+    public function images()
+    {
+        return $this->hasMany(ProjectImage::class)->orderBy('order');
+    }
+
     public function trans(string $field): string
     {
         $locale = app()->getLocale();
