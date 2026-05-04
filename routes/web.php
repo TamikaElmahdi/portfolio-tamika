@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\Route;
 
@@ -8,6 +9,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PortfolioController::class, 'index'])->name('home');
 Route::post('/locale', [PortfolioController::class, 'setLocale'])->name('locale.set');
 Route::post('/contact', [PortfolioController::class, 'sendMessage'])->name('contact.send');
+
+// Blog public routes
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/sitemap.xml', [BlogController::class, 'sitemap'])->name('blog.sitemap');
 
 // Auth routes
 require __DIR__.'/auth.php';
@@ -31,6 +37,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Testimonials
     Route::resource('testimonials', Admin\TestimonialController::class)->except(['show']);
+
+    // Blog
+    Route::resource('blog', Admin\BlogPostController::class)->except(['show'])
+        ->parameters(['blog' => 'blog']);
+    Route::resource('blog-categories', Admin\BlogCategoryController::class)->except(['show']);
 
     // Messages
     Route::get('/messages', [Admin\MessageController::class, 'index'])->name('messages.index');

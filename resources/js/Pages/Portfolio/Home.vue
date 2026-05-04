@@ -49,6 +49,13 @@ import { Head } from '@inertiajs/vue3'
             >
               {{ link.label }}
             </a>
+            <a
+              href="/blog"
+              class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+              :class="scrolled ? 'text-gray-700 dark:text-gray-200 hover:text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30' : 'text-white/90 hover:text-white hover:bg-white/10'"
+            >
+              {{ currentLocale === 'fr' ? 'Blog' : 'Blog' }}
+            </a>
           </div>
 
           <!-- Actions -->
@@ -93,6 +100,13 @@ import { Head } from '@inertiajs/vue3'
             class="block px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:text-teal-600 transition-colors font-medium"
           >
             {{ link.label }}
+          </a>
+          <a
+            href="/blog"
+            @click="mobileMenu = false"
+            class="block px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:text-teal-600 transition-colors font-medium"
+          >
+            Blog
           </a>
         </div>
       </div>

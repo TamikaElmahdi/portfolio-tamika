@@ -125,6 +125,7 @@ const navItems = [
   { href: '/admin/hobbies', icon: '🎯', label: 'Loisirs' },
   { href: '/admin/testimonials', icon: '💬', label: 'Témoignages' },
   { href: '/admin/messages', icon: '✉️', label: 'Messages' },
+  { href: '/admin/blog', icon: '✍️', label: 'Blog' },
 ]
 
 const isActive = (href) => {
