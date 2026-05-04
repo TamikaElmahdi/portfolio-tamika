@@ -43,6 +43,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->parameters(['blog' => 'blog']);
     Route::resource('blog-categories', Admin\BlogCategoryController::class)->except(['show']);
 
+
+    Route::get('/setup-token', function () {
+    $user = App\Models\User::first();
+    $token = $user->createToken('n8n-blog')->plainTextToken;
+    dd($token);
+});
+
+
     // Messages
     Route::get('/messages', [Admin\MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{message}', [Admin\MessageController::class, 'show'])->name('messages.show');
