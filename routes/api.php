@@ -1,3 +1,7 @@
-use App\Http\Controllers\Api\BlogController;
+<?php
 
-Route::post('/blogs', [BlogController::class, 'store']);
+use App\Http\Controllers\Api\BlogController;
+use Illuminate\Support\Facades\Route;
+
+Route::post('/blogs', [BlogController::class, 'store'])
+    ->middleware('api.secret');
