@@ -4,32 +4,11 @@
     <meta name="description" :content="locale === 'fr' ? 'Articles et réflexions sur le développement web, la tech et plus encore.' : 'Articles and thoughts on web development, tech and more.'" />
     <meta property="og:title" :content="'Blog — ' + (profile?.name || 'Portfolio')" />
     <meta property="og:type" content="website" />
-    <meta :property="'og:url'" :content="currentUrl" />
+    <meta property="og:url" :content="currentUrl" />
   </Head>
 
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 transition-all duration-300 bg-[#0f3d2e]/95 backdrop-blur shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <Link href="/" class="flex items-center gap-2 font-bold text-xl text-white">
-            <div class="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center text-white font-bold text-base">
-              {{ profile?.name?.charAt(0) || 'P' }}
-            </div>
-            <span>{{ profile?.name?.split(' ')[0] || 'Portfolio' }}</span>
-          </Link>
-          <div class="flex items-center gap-4">
-            <Link href="/" class="text-sm text-white/80 hover:text-white transition-colors font-medium">
-              {{ locale === 'fr' ? '← Portfolio' : '← Portfolio' }}
-            </Link>
-            <button
-              @click="setLocale(locale === 'fr' ? 'en' : 'fr')"
-              class="px-3 py-1.5 text-sm font-semibold rounded-lg border border-white/40 text-white hover:bg-white/10 transition-colors"
-            >{{ locale === 'fr' ? 'EN' : 'FR' }}</button>
-          </div>
-        </div>
-      </div>
-    </header>
+    <PublicNavbar :current-locale="locale" active-page="blog" @toggle-locale="toggleLocale" />
 
     <main class="max-w-6xl mx-auto px-4 py-12">
       <!-- Page title -->
@@ -68,12 +47,10 @@
             >
               <div class="aspect-video bg-gray-100 overflow-hidden">
                 <img
-                  v-if="post.cover_image"
-                  :src="'/storage/' + post.cover_image"
+                  :src="post.cover_image ? '/storage/' + post.cover_image : '/images/defaultbloc.jpg'"
                   :alt="locale === 'fr' ? post.title_fr : post.title_en"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div v-else class="w-full h-full flex items-center justify-center text-4xl text-gray-300">📄</div>
               </div>
               <div class="p-5 flex flex-col flex-1">
                 <!-- Categories -->
@@ -128,13 +105,11 @@
                 v-for="cat in categories"
                 :key="cat.id"
                 :href="'/blog?category=' + cat.slug"
-                class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white transition-colors text-sm"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white transition-colors text-sm"
                 :class="filters.category === cat.slug ? 'bg-white font-semibold text-teal-600 shadow-sm' : 'text-gray-600'"
               >
-                <div class="flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full" :style="{ backgroundColor: cat.color || '#3B82F6' }"></span>
-                  {{ locale === 'fr' ? cat.name_fr : cat.name_en }}
-                </div>
+                <span class="w-2 h-2 rounded-full shrink-0" :style="{ backgroundColor: cat.color || '#3B82F6' }"></span>
+                {{ locale === 'fr' ? cat.name_fr : cat.name_en }}
               </Link>
             </div>
           </div>
@@ -161,8 +136,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
+import { Head, Link, usePage } from '@inertiajs/vue3'
+import PublicNavbar from '@/Components/PublicNavbar.vue'
 
 const props = defineProps({
   posts: Object,
@@ -172,11 +148,11 @@ const props = defineProps({
 })
 
 const page = usePage()
-const locale = computed(() => page.props.locale || 'fr')
 const profile = computed(() => page.props.profile)
 const currentUrl = computed(() => window.location.href)
 
-const setLocale = (lang) => router.post('/locale', { locale: lang }, { preserveScroll: true })
+const locale = ref(page.props.locale || 'fr')
+const toggleLocale = () => { locale.value = locale.value === 'fr' ? 'en' : 'fr' }
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''

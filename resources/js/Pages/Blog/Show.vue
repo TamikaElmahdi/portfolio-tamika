@@ -15,33 +15,16 @@
   </Head>
 
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-[#0f3d2e]/95 backdrop-blur shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <Link href="/" class="flex items-center gap-2 font-bold text-xl text-white">
-            <div class="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center text-white font-bold text-base">
-              {{ profile?.name?.charAt(0) || 'P' }}
-            </div>
-            <span>{{ profile?.name?.split(' ')[0] || 'Portfolio' }}</span>
-          </Link>
-          <div class="flex items-center gap-4">
-            <Link href="/blog" class="text-sm text-white/80 hover:text-white transition-colors font-medium">
-              ← Blog
-            </Link>
-            <button
-              @click="setLocale(locale === 'fr' ? 'en' : 'fr')"
-              class="px-3 py-1.5 text-sm font-semibold rounded-lg border border-white/40 text-white hover:bg-white/10 transition-colors"
-            >{{ locale === 'fr' ? 'EN' : 'FR' }}</button>
-          </div>
-        </div>
-      </div>
-    </header>
+    <PublicNavbar :current-locale="locale" active-page="blog" @toggle-locale="toggleLocale" />
 
     <main class="max-w-4xl mx-auto px-4 py-12">
       <!-- Cover image -->
-      <div v-if="post.cover_image" class="rounded-2xl overflow-hidden mb-8 aspect-video">
-        <img :src="'/storage/' + post.cover_image" :alt="locale === 'fr' ? post.title_fr : post.title_en" class="w-full h-full object-cover" />
+      <div class="rounded-2xl overflow-hidden mb-8 aspect-video">
+        <img
+          :src="post.cover_image ? '/storage/' + post.cover_image : '/images/defaultbloc.jpg'"
+          :alt="locale === 'fr' ? post.title_fr : post.title_en"
+          class="w-full h-full object-cover"
+        />
       </div>
 
       <article>
@@ -126,12 +109,10 @@
           >
             <div class="aspect-video bg-gray-100 overflow-hidden">
               <img
-                v-if="rec.cover_image"
-                :src="'/storage/' + rec.cover_image"
+                :src="rec.cover_image ? '/storage/' + rec.cover_image : '/images/defaultbloc.jpg'"
                 :alt="locale === 'fr' ? rec.title_fr : rec.title_en"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <div v-else class="w-full h-full flex items-center justify-center text-3xl text-gray-300">📄</div>
             </div>
             <div class="p-4">
               <h3 class="font-semibold text-gray-900 group-hover:text-teal-600 transition-colors line-clamp-2">
@@ -148,7 +129,8 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import { Head, Link, usePage } from '@inertiajs/vue3'
+import PublicNavbar from '@/Components/PublicNavbar.vue'
 
 const props = defineProps({
   post: Object,
@@ -156,8 +138,9 @@ const props = defineProps({
 })
 
 const page = usePage()
-const locale = computed(() => page.props.locale || 'fr')
-const profile = computed(() => page.props.profile)
+const locale = ref(page.props.locale || 'fr')
+const toggleLocale = () => { locale.value = locale.value === 'fr' ? 'en' : 'fr' }
+
 const currentUrl = computed(() => window.location.href)
 
 const ogImageUrl = computed(() => {
@@ -181,8 +164,6 @@ const copyLink = async () => {
   copied.value = true
   setTimeout(() => { copied.value = false }, 2000)
 }
-
-const setLocale = (lang) => router.post('/locale', { locale: lang }, { preserveScroll: true })
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
