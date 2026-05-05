@@ -21,10 +21,10 @@
       <!-- Cover image -->
       <div class="rounded-2xl overflow-hidden mb-8 aspect-video bg-gray-100">
         <img
-          :src="post.cover_image ? '/storage/' + post.cover_image : '/images/defaultbloc.jpg'"
+          :src="post.cover_image ? '/storage/' + post.cover_image : defaultBlogImg"
           :alt="locale === 'fr' ? post.title_fr : post.title_en"
           class="w-full h-full object-cover"
-          @error="(e) => e.target.src = '/images/defaultbloc.jpg'"
+          @error="(e) => { e.target.onerror = null; e.target.src = defaultBlogImg }"
         />
       </div>
 
@@ -110,10 +110,10 @@
           >
             <div class="aspect-video bg-gray-100 overflow-hidden">
               <img
-                :src="rec.cover_image ? '/storage/' + rec.cover_image : '/images/defaultbloc.jpg'"
+                :src="rec.cover_image ? '/storage/' + rec.cover_image : defaultBlogImg"
                 :alt="locale === 'fr' ? rec.title_fr : rec.title_en"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                @error="(e) => e.target.src = '/images/defaultbloc.jpg'"
+                @error="(e) => { e.target.onerror = null; e.target.src = defaultBlogImg }"
               />
             </div>
             <div class="p-4">
@@ -134,6 +134,7 @@ import { ref, computed } from 'vue'
 import { Head, Link, usePage } from '@inertiajs/vue3'
 import { marked } from 'marked'
 import PublicNavbar from '@/Components/PublicNavbar.vue'
+import { defaultBlogImg } from '@/utils/defaults.js'
 
 marked.setOptions({ breaks: true, gfm: true })
 

@@ -47,10 +47,10 @@
             >
               <div class="aspect-video bg-gray-100 overflow-hidden">
                 <img
-                  :src="post.cover_image ? '/storage/' + post.cover_image : '/images/defaultbloc.jpg'"
+                  :src="post.cover_image ? '/storage/' + post.cover_image : defaultBlogImg"
                   :alt="locale === 'fr' ? post.title_fr : post.title_en"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  @error="(e) => e.target.src = '/images/defaultbloc.jpg'"
+                  @error="(e) => { e.target.onerror = null; e.target.src = defaultBlogImg }"
                 />
               </div>
               <div class="p-5 flex flex-col flex-1">
@@ -140,6 +140,7 @@
 import { ref, computed } from 'vue'
 import { Head, Link, usePage } from '@inertiajs/vue3'
 import PublicNavbar from '@/Components/PublicNavbar.vue'
+import { defaultBlogImg } from '@/utils/defaults.js'
 
 const props = defineProps({
   posts: Object,
