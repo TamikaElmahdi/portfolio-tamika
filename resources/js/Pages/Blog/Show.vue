@@ -19,11 +19,12 @@
 
     <main class="max-w-4xl mx-auto px-4 py-12">
       <!-- Cover image -->
-      <div class="rounded-2xl overflow-hidden mb-8 aspect-video">
+      <div class="rounded-2xl overflow-hidden mb-8 aspect-video bg-gray-100">
         <img
           :src="post.cover_image ? '/storage/' + post.cover_image : '/images/defaultbloc.jpg'"
           :alt="locale === 'fr' ? post.title_fr : post.title_en"
           class="w-full h-full object-cover"
+          @error="(e) => e.target.src = '/images/defaultbloc.jpg'"
         />
       </div>
 
@@ -90,8 +91,8 @@
 
         <!-- Content -->
         <div
-          class="prose prose-lg max-w-none mt-10 text-gray-700 prose-headings:text-gray-900 prose-a:text-teal-600 prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900"
-          v-html="locale === 'fr' ? post.content_fr : post.content_en"
+          class="blog-content mt-10"
+          v-html="parsedContent"
         />
       </article>
 
@@ -112,6 +113,7 @@
                 :src="rec.cover_image ? '/storage/' + rec.cover_image : '/images/defaultbloc.jpg'"
                 :alt="locale === 'fr' ? rec.title_fr : rec.title_en"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                @error="(e) => e.target.src = '/images/defaultbloc.jpg'"
               />
             </div>
             <div class="p-4">
@@ -130,7 +132,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Head, Link, usePage } from '@inertiajs/vue3'
+import { marked } from 'marked'
 import PublicNavbar from '@/Components/PublicNavbar.vue'
+
+marked.setOptions({ breaks: true, gfm: true })
 
 const props = defineProps({
   post: Object,
@@ -142,6 +147,11 @@ const locale = ref(page.props.locale || 'fr')
 const toggleLocale = () => { locale.value = locale.value === 'fr' ? 'en' : 'fr' }
 
 const currentUrl = computed(() => window.location.href)
+
+const parsedContent = computed(() => {
+  const raw = locale.value === 'fr' ? props.post.content_fr : props.post.content_en
+  return raw ? marked(raw) : ''
+})
 
 const ogImageUrl = computed(() => {
   const img = props.post.og_image || props.post.cover_image

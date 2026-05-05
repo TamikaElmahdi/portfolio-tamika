@@ -50,6 +50,7 @@
                   :src="post.cover_image ? '/storage/' + post.cover_image : '/images/defaultbloc.jpg'"
                   :alt="locale === 'fr' ? post.title_fr : post.title_en"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  @error="(e) => e.target.src = '/images/defaultbloc.jpg'"
                 />
               </div>
               <div class="p-5 flex flex-col flex-1">
