@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/vue3'
     <Head>
     <title>{{ profile?.name }} — Full-Stack Developer</title>
     <meta name="description" :content="profile?.bio_en?.substring(0, 160)" />
-    <meta name="keywords" content="Full-Stack Developer, Laravel, Vue.js, Angular, .NET, PHP, Morocco" />
+    <meta name="keywords" content="Full-Stack Developer, Laravel, Vue.js, Angular, .NET, PHP, Morocco, Freelancer, Développeur Web, Mission" />
 
     <!-- Open Graph (Facebook, LinkedIn) -->
     <meta property="og:type" content="website" />
