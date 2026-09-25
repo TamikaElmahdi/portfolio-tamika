@@ -1,48 +1,149 @@
-name: Deploy to Hostinger
+name: Tests et deploiement
 
+# Chaque poussee sur la branche principale lance les tests, puis, s'ils
+# passent, publie le site sur l'hebergement Hostinger. Le deploiement peut
+# aussi etre declenche a la main depuis l'onglet Actions.
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Deux poussees rapprochees ne doivent pas se deployer en meme temps.
+concurrency:
+  group: deploiement-production
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  tests:
+    name: Suite de tests
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Installer PHP
+        uses: shivammathur/setup-php@v2
         with:
-          node-version: '20'
+          php-version: '8.2'
+          extensions: mbstring, pdo_sqlite, pdo_mysql, gd, zip, intl
+          coverage: none
 
-      - name: Install and build frontend
+      - name: Installer les dependances PHP
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Preparer l'environnement de test
         run: |
-          npm install
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Lancer les tests
+        run: php artisan test
+
+  deploiement:
+    name: Publication sur Hostinger
+    runs-on: ubuntu-latest
+    needs: tests
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Tant que les secrets ne sont pas renseignes, la publication est
+      # simplement sautee : la poussee reste verte et le message explique
+      # ce qu'il reste a faire.
+      - name: Verifier la configuration du serveur
+        id: verif
+        env:
+          HOTE: ${{ secrets.SSH_HOST }}
+          UTILISATEUR: ${{ secrets.SSH_USER }}
+          CHEMIN: ${{ secrets.DEPLOY_PATH }}
+          CLE_PRIVEE: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          if [ -n "$HOTE" ] && [ -n "$UTILISATEUR" ] && [ -n "$CHEMIN" ] && [ -n "$CLE_PRIVEE" ]; then
+            echo "pret=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pret=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Publication sautee"
+              echo
+              echo "Les secrets du serveur ne sont pas encore renseignes."
+              echo "Ajoutez-les dans Settings > Secrets and variables > Actions :"
+              echo
+              echo "| Secret | Renseigne |"
+              echo "| --- | --- |"
+              echo "| SSH_HOST | $([ -n "$HOTE" ] && echo oui || echo non) |"
+              echo "| SSH_USER | $([ -n "$UTILISATEUR" ] && echo oui || echo non) |"
+              echo "| DEPLOY_PATH | $([ -n "$CHEMIN" ] && echo oui || echo non) |"
+              echo "| SSH_PRIVATE_KEY | $([ -n "$CLE_PRIVEE" ] && echo oui || echo non) |"
+              echo
+              echo "La marche a suivre est dans deploy/README.md."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Installer PHP
+        if: steps.verif.outputs.pret == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, gd, zip, intl
+          coverage: none
+
+      # Les dependances sont installees ici, pas sur le serveur : l'heberge-
+      # ment mutualise n'a ni la memoire ni le temps d'executer Composer.
+      - name: Installer les dependances de production
+        if: steps.verif.outputs.pret == 'true'
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+
+      - name: Installer Node
+        if: steps.verif.outputs.pret == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Idem pour les assets : Node n'est pas garanti sur l'hebergement,
+      # le dossier public/build part donc deja compile.
+      - name: Compiler les assets
+        if: steps.verif.outputs.pret == 'true'
+        run: |
+          npm ci
           npm run build
 
-      - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 65002
-          local_path: './*'
-          remote_path: '/home/u528979203/domains/elmahditamika.com/public_html/portfolio'
-          sftp_only: true
-          delete_remote_files: false
+      - name: Preparer la cle SSH
+        if: steps.verif.outputs.pret == 'true'
+        env:
+          CLE_PRIVEE: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOTE: ${{ secrets.SSH_HOST }}
+          PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$CLE_PRIVEE" > ~/.ssh/deploiement
+          chmod 600 ~/.ssh/deploiement
+          ssh-keyscan -p "${PORT:-22}" -H "$HOTE" >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Clear Laravel cache via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 65002
-          script: |
-            cd /home/u528979203/domains/elmahditamika.com/public_html/portfolio
-            php artisan route:clear
-            php artisan config:clear
-            php artisan view:clear
-          
+      - name: Envoyer les fichiers
+        if: steps.verif.outputs.pret == 'true'
+        env:
+          HOTE: ${{ secrets.SSH_HOST }}
+          PORT: ${{ secrets.SSH_PORT }}
+          UTILISATEUR: ${{ secrets.SSH_USER }}
+          CHEMIN: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          rsync -az --delete \
+            --exclude-from=deploy/exclusions.txt \
+            -e "ssh -p ${PORT:-22} -i ~/.ssh/deploiement" \
+            ./ "$UTILISATEUR@$HOTE:$CHEMIN/"
+
+      - name: Finaliser sur le serveur
+        if: steps.verif.outputs.pret == 'true'
+        env:
+          HOTE: ${{ secrets.SSH_HOST }}
+          PORT: ${{ secrets.SSH_PORT }}
+          UTILISATEUR: ${{ secrets.SSH_USER }}
+          CHEMIN: ${{ secrets.DEPLOY_PATH }}
+          PHP_BIN: ${{ secrets.PHP_BIN }}
+        run: |
+          ssh -p "${PORT:-22}" -i ~/.ssh/deploiement "$UTILISATEUR@$HOTE" \
+            "CHEMIN='$CHEMIN' PHP_BIN='${PHP_BIN:-php}' bash -s" < deploy/apres-envoi.sh

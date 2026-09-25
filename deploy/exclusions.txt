@@ -1,0 +1,50 @@
+# Fichiers que rsync ne transmet jamais au serveur.
+#
+# Une exclusion protege aussi le fichier cote serveur : --delete n'efface pas
+# ce qui est liste ici. C'est ce qui garde .env, storage/ et les images
+# televersees intactes d'un deploiement a l'autre.
+#
+# Note : resources/views part bien sur le serveur, Laravel en a besoin a
+# l'execution. Seules les sources compilees par Vite restent ici.
+
+# Dossier de travail Git et integration continue
+/.git
+/.github
+/.gitattributes
+/.gitignore
+
+# Outils de build : les assets partent deja compiles dans public/build
+/node_modules
+/package.json
+/package-lock.json
+/vite.config.js
+/resources/css
+/resources/js
+
+# Tests et configuration de developpement
+/tests
+/phpunit.xml
+/.editorconfig
+/.phpunit.cache
+/.phpunit.result.cache
+
+# Archives et notes locales
+/portfolio.zip
+/.htaccess
+
+# Configuration propre au serveur : elle vit sur le serveur, pas dans le depot
+# (.env, .env_prod, .env_dev, .env.example...)
+/.env*
+
+# Donnees du serveur : journaux, sessions, caches, images televersees
+/storage
+/public/storage
+/public/hot
+/bootstrap/cache/*.php
+
+# Fichiers de configuration PHP propres a l'hebergement
+/.user.ini
+/public/.user.ini
+
+# Dossier de deploiement lui-meme
+/deploy
