@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-BFFAm-86.css",
+    "file": "assets/app-B5BLBJc7.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -8,13 +8,21 @@
       "app.css"
     ]
   },
+  "resources/img/defaultbloc.jpg": {
+    "file": "assets/defaultbloc-DIlmLKsM.jpg",
+    "src": "resources/img/defaultbloc.jpg"
+  },
   "resources/js/app.js": {
-    "file": "assets/app-DG1XiT06.js",
+    "file": "assets/app-C8xxJ9f9.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-BFFAm-86.css"
+      "assets/app-vLXGxkXs.css",
+      "assets/app-B5BLBJc7.css"
+    ],
+    "assets": [
+      "assets/defaultbloc-DIlmLKsM.jpg"
     ]
   }
 }

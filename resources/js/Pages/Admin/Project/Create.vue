@@ -98,6 +98,7 @@
 import { ref, watch } from 'vue'
 import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import { sanitizeImage } from '@/utils/image'
 
 const form = useForm({
   title_fr: '', title_en: '',
@@ -115,11 +116,13 @@ watch(technologiesInput, (val) => {
 const fileInput = ref(null)
 const previews = ref([])
 
-function addFiles(files) {
-  Array.from(files).forEach((file) => {
-    form.images.push(file)
-    previews.value.push(URL.createObjectURL(file))
-  })
+async function addFiles(files) {
+  for (const file of Array.from(files)) {
+    if (!file.type.startsWith('image/')) continue
+    const clean = await sanitizeImage(file, `image-${Date.now()}-${form.images.length + 1}`)
+    form.images.push(clean)
+    previews.value.push(URL.createObjectURL(clean))
+  }
 }
 
 function onFileChange(e) {

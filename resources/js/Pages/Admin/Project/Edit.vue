@@ -119,6 +119,7 @@
 import { ref, watch } from 'vue'
 import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import { sanitizeImage } from '@/utils/image'
 
 const props = defineProps({ project: Object })
 
@@ -162,11 +163,13 @@ function toggleDelete(id) {
 const fileInput = ref(null)
 const newPreviews = ref([])
 
-function addFiles(files) {
-  Array.from(files).forEach((file) => {
-    form.images.push(file)
-    newPreviews.value.push(URL.createObjectURL(file))
-  })
+async function addFiles(files) {
+  for (const file of Array.from(files)) {
+    if (!file.type.startsWith('image/')) continue
+    const clean = await sanitizeImage(file, `image-${Date.now()}-${form.images.length + 1}`)
+    form.images.push(clean)
+    newPreviews.value.push(URL.createObjectURL(clean))
+  }
 }
 
 function onFileChange(e) {
